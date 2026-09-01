@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import api from '../utils/axios';
 import { useAuth } from '../context/AuthContext';
-import { KeyRound, CheckCircle } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import { KeyRound, CheckCircle, Moon, Sun } from 'lucide-react';
 
 const AdminSettings = () => {
   const { logout } = useAuth();
+  const { theme, setTheme } = useTheme();
   const [passwords, setPasswords] = useState({
     currentPassword: '',
     newPassword: '',
@@ -55,15 +57,15 @@ const AdminSettings = () => {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-        <h2 className="text-2xl font-bold text-slate-800">Settings</h2>
-        <p className="text-slate-500 mt-1">Manage application preferences and security</p>
+      <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 transition-colors">
+        <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Settings</h2>
+        <p className="text-slate-500 dark:text-slate-400 mt-1">Manage application preferences and security</p>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <div className="px-6 py-5 border-b border-slate-100 flex items-center gap-3">
-          <KeyRound className="text-emerald-600" />
-          <h3 className="text-lg font-bold text-slate-800">Change Password</h3>
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden transition-colors">
+        <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3">
+          <KeyRound className="text-emerald-600 dark:text-emerald-500" />
+          <h3 className="text-lg font-bold text-slate-800 dark:text-white">Change Password</h3>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
@@ -77,36 +79,36 @@ const AdminSettings = () => {
           )}
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1">Current Password</label>
+            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Current Password</label>
             <input
               type="password"
               name="currentPassword"
               value={passwords.currentPassword}
               onChange={handleChange}
               required
-              className="w-full md:w-2/3 p-2.5 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full md:w-2/3 p-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 transition-colors"
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1">New Password</label>
+            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">New Password</label>
             <input
               type="password"
               name="newPassword"
               value={passwords.newPassword}
               onChange={handleChange}
               required
-              className="w-full md:w-2/3 p-2.5 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full md:w-2/3 p-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 transition-colors"
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1">Confirm New Password</label>
+            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Confirm New Password</label>
             <input
               type="password"
               name="confirmPassword"
               value={passwords.confirmPassword}
               onChange={handleChange}
               required
-              className="w-full md:w-2/3 p-2.5 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full md:w-2/3 p-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 transition-colors"
             />
           </div>
 
@@ -122,23 +124,48 @@ const AdminSettings = () => {
         </form>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <div className="px-6 py-5 border-b border-slate-100">
-          <h3 className="text-lg font-bold text-slate-800">Application Settings</h3>
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden transition-colors">
+        <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800">
+          <h3 className="text-lg font-bold text-slate-800 dark:text-white">Application Settings</h3>
         </div>
         <div className="p-6 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Application Name</p>
-              <p className="font-bold text-slate-800">Innani's App</p>
+              <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Application Name</p>
+              <p className="font-bold text-slate-800 dark:text-white">Innani's App</p>
             </div>
             <div>
-              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Default Timezone</p>
-              <p className="font-bold text-slate-800">Asia/Kolkata (IST)</p>
+              <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Default Timezone</p>
+              <p className="font-bold text-slate-800 dark:text-white">Asia/Kolkata (IST)</p>
             </div>
             <div>
-              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Weekly Holidays</p>
-              <p className="font-bold text-slate-800">Sunday (Auto-calculated)</p>
+              <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Theme Mode</p>
+              <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-950 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 w-fit">
+                <button
+                  onClick={() => setTheme('light')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                    theme === 'light' 
+                      ? 'bg-white text-emerald-600 shadow-sm border border-slate-200' 
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                  }`}
+                >
+                  <Sun size={18} /> Light
+                </button>
+                <button
+                  onClick={() => setTheme('dark')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                    theme === 'dark' 
+                      ? 'bg-slate-800 text-emerald-400 shadow-sm border border-slate-700' 
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                  }`}
+                >
+                  <Moon size={18} /> Dark
+                </button>
+              </div>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Weekly Holidays</p>
+              <p className="font-bold text-slate-800 dark:text-white">Sunday (Auto-calculated)</p>
             </div>
           </div>
         </div>

@@ -20,6 +20,15 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
+    // Check if worker account is active before allowing login
+    if (user.role === 'worker') {
+      const Worker = require('../models/Worker');
+      const worker = await Worker.findById(user.workerId);
+      if (!worker || worker.isActive === false) {
+        return res.status(403).json({ message: 'Your account is inactive. Please contact the administrator.' });
+      }
+    }
+
     const payload = {
       id: user._id,
       role: user.role,
@@ -45,7 +54,7 @@ router.get('/me', protect, async (req, res) => {
     if (user.role === 'worker') {
       const Worker = require('../models/Worker');
       const worker = await Worker.findById(user.workerId);
-      if (!worker || !worker.active) {
+      if (!worker || worker.isActive === false) {
         return res.status(403).json({ message: 'Account deactivated' });
       }
     }

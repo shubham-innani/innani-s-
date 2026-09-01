@@ -3,5 +3,6 @@ node_modules/
 .env.local
 dist/
 build/
+.vercel/
 __pycache__/
 *.pyc

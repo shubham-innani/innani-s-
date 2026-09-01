@@ -63,7 +63,7 @@ const AdminWorkers = () => {
   };
 
   const handleRemove = async (id) => {
-    if (window.confirm("Are you sure you want to remove this worker?\n\nRemoving this worker will make them inactive and they will no longer appear in daily attendance. Their previous attendance records will be preserved.")) {
+    if (window.confirm("Are you sure you want to remove this worker? Their historical data and attendance will be preserved, but they will no longer appear in active workers or be able to receive attendance.")) {
       try {
         await api.delete(`/workers/${id}`);
         fetchWorkers();
@@ -84,8 +84,8 @@ const AdminWorkers = () => {
     }
   }
 
-  const activeWorkers = workers.filter(w => w.active);
-  const archivedWorkers = workers.filter(w => !w.active);
+  const activeWorkers = workers.filter(w => w.isActive !== false);
+  const archivedWorkers = workers.filter(w => w.isActive === false);
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
@@ -150,9 +150,9 @@ const AdminWorkers = () => {
       </div>
 
       {archivedWorkers.length > 0 && (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden opacity-75">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden opacity-75 mt-8">
           <div className="px-6 py-5 border-b border-slate-100 bg-slate-50">
-            <h3 className="text-lg font-bold text-slate-800">Archived Workers ({archivedWorkers.length})</h3>
+            <h3 className="text-lg font-bold text-slate-800">Inactive Workers ({archivedWorkers.length})</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
@@ -160,7 +160,9 @@ const AdminWorkers = () => {
                 {archivedWorkers.map((w) => (
                   <tr key={w._id} className="bg-slate-50/50">
                     <td className="p-4 font-medium text-slate-600">{w.name}</td>
-                    <td className="p-4 text-slate-500 text-sm">Removed</td>
+                    <td className="p-4 text-slate-500 text-sm">
+                      Removed {w.removedAt ? `on ${format(new Date(w.removedAt), 'MMM do, yyyy')}` : ''}
+                    </td>
                     <td className="p-4 text-right">
                       <button onClick={() => handleRestore(w._id)} className="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-semibold rounded-md transition-colors flex items-center gap-1.5 ml-auto">
                         <RotateCcw size={16} /> Restore

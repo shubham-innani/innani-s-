@@ -8,15 +8,17 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (localStorage.getItem('token')) localStorage.removeItem('token');
+    
     const checkLoggedIn = async () => {
-      const token = localStorage.getItem('token');
+      const token = document.cookie.split(';').find(c => c.trim().startsWith('token='))?.split('=')[1];
       if (token) {
         try {
           const res = await api.get('/auth/me');
           setUser(res.data);
         } catch (error) {
           console.error("Token invalid or expired");
-          localStorage.removeItem('token');
+          document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         }
       }
       setLoading(false);
@@ -27,13 +29,13 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     const res = await api.post('/auth/login', { username, password });
-    localStorage.setItem('token', res.data.token);
+    document.cookie = `token=${res.data.token}; path=/`;
     setUser(res.data.user);
     return res.data.user;
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     setUser(null);
   };
 

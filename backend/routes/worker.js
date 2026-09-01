@@ -9,7 +9,7 @@ const { protect, adminOnly } = require('../middleware/auth');
 // @desc Get all workers (active and archived)
 router.get('/', protect, async (req, res) => {
   try {
-    const workers = await Worker.find().sort({ active: -1, createdAt: -1 });
+    const workers = await Worker.find().sort({ isActive: -1, createdAt: -1 });
     res.json(workers);
   } catch (error) {
     console.error(error);
@@ -35,7 +35,8 @@ router.post('/', protect, adminOnly, async (req, res) => {
       title,
       phone: phone || '',
       joiningDate: joiningDate ? new Date(joiningDate) : new Date(),
-      active: true
+      isActive: true,
+      removedAt: null
     });
 
     // Create user account
@@ -61,11 +62,16 @@ router.post('/', protect, adminOnly, async (req, res) => {
 // @desc Update worker details
 router.put('/:id', protect, adminOnly, async (req, res) => {
   try {
-    const { name, title, phone, joiningDate, active } = req.body;
+    const { name, title, phone, joiningDate, isActive } = req.body;
     
+    // We only update isActive here if provided. 
+    // removedAt is explicitly handled by the delete/restore routes.
+    const updateData = { name, title, phone, joiningDate };
+    if (isActive !== undefined) updateData.isActive = isActive;
+
     const worker = await Worker.findByIdAndUpdate(
       req.params.id, 
-      { name, title, phone, joiningDate, active }, 
+      updateData, 
       { new: true }
     );
     
@@ -85,7 +91,11 @@ router.put('/:id', protect, adminOnly, async (req, res) => {
 // @desc Soft delete worker
 router.delete('/:id', protect, adminOnly, async (req, res) => {
   try {
-    const worker = await Worker.findByIdAndUpdate(req.params.id, { active: false }, { new: true });
+    const worker = await Worker.findByIdAndUpdate(
+      req.params.id, 
+      { isActive: false, removedAt: new Date() }, 
+      { new: true }
+    );
     if (!worker) return res.status(404).json({ message: 'Worker not found' });
     res.json({ message: 'Worker deactivated', worker });
   } catch (error) {
@@ -98,7 +108,11 @@ router.delete('/:id', protect, adminOnly, async (req, res) => {
 // @desc Restore soft deleted worker
 router.post('/:id/restore', protect, adminOnly, async (req, res) => {
   try {
-    const worker = await Worker.findByIdAndUpdate(req.params.id, { active: true }, { new: true });
+    const worker = await Worker.findByIdAndUpdate(
+      req.params.id, 
+      { isActive: true, removedAt: null }, 
+      { new: true }
+    );
     if (!worker) return res.status(404).json({ message: 'Worker not found' });
     res.json({ message: 'Worker restored', worker });
   } catch (error) {
